@@ -70,6 +70,10 @@
 				Content="@ Change"
 					Background="Blue"
 				Click="startChangeST_Clicked"/>
+			<Button x:Name="startReuseST"
+				Content="@ Reuse"
+					Background="Blue"
+				Click="startChangeReuse_Clicked"/>
 
 		</StackPanel>
 
