@@ -15,6 +15,8 @@ namespace dopetest_blazor
 	{
 		public static void Main(string[] args)
 		{
+			App.IsServer = true;
+
 			CreateHostBuilder(args).Build().Run();
 		}
 

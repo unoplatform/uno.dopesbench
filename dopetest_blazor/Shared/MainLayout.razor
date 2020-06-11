@@ -90,6 +90,8 @@
     private int _accumN;
     private string _dopes = "";
 
+    private bool _isUpdatePending = false;
+
     private readonly List<string> _labels = new List<string>();
 
     private string GetDope() => $"<span style=\"position:absolute;top:{GetTop()}px;left:{GetLeft()}px; transform:{GetTransform()}; color:{GetColor()};\">Dope</span>";
@@ -128,7 +130,7 @@
             var processedPreLoop = _processed;
 
             //60hz, 16ms to build the frame
-            while (_started && _sw.ElapsedMilliseconds - now < 16)
+            while (_started && !_isUpdatePending && _sw.ElapsedMilliseconds - now < 16 && _processed - processedPreLoop < Max)
             {
                 var label = GetDope();
                 _processed++;
@@ -164,7 +166,17 @@
 
             // Console.WriteLine($"Created this loop: {_processed - processedPreLoop}");
 
+            if (App.IsServer)
+            {
+                _isUpdatePending = true;
+            }
             await Task.Delay(1);
         }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        _isUpdatePending = false;
+        base.OnAfterRender(firstRender);
     }
 }

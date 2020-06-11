@@ -17,6 +17,8 @@ namespace dopetest_blazor
 			var builder = WebAssemblyHostBuilder.CreateDefault(args);
 			builder.RootComponents.Add<App>("app");
 
+			App.IsServer = false;
+
 			builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 			await builder.Build().RunAsync();
