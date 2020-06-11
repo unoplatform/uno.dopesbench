@@ -1,5 +1,160 @@
 ﻿@inherits LayoutComponentBase
 
+@using System.Diagnostics;
+
+<style>
+
+      @@font-face {
+          font-family: 'IBMPlexMono';
+          src: url(IBMPlexMono-Regular.woff) format("woff");
+          font-weight: normal;
+          font-style: normal;
+      }
+
+      body {
+        background-color: black;
+        text-align: center;
+        font-family: IBMPlexMono;
+        font-size: 15px;
+        color: white;
+        padding: 10px;
+      }
+
+      #root {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      button {
+        font-family: 'IBMPlexMono';
+        position: absolute;
+        top: @(Height - 50)px;
+        border: none;
+        color: white;
+        height: 30px;
+        width: 96px;
+        transform: translateX(-48px);
+        font-size: 15px;
+        z-index: 1;
+      }
+
+      #stop {
+        background-color: red;
+      }
+
+      #start {
+        background-color: green;
+      }
+
+      #dopes {
+        background-color: red;
+        position: absolute;
+        top: 20px;
+        width: 180px;
+        transform: translateX(-90px);
+        padding: 7px;
+      }
+
+</style>
+
 <div class="main">
-    <p>Hello woo world</p>
+    @foreach (var label in _labels)
+    {
+        @((MarkupString)label)
+    }
+    <span id="dopes" hidden="@(string.IsNullOrEmpty(_dopes))">@_dopes</span>
+    <button id="@(_started ? "stop" : "start")" @onclick="StartClicked">@(_started ? "@ Stop" : "@ Start")</button>
 </div>
+@code {
+    private const int Max = 600;
+
+    private int Height => 800; // TODO: calculate
+    private int Width => 1000; // TODO: calculate
+
+    private readonly Random2 _rand = new Random2(0);
+
+    private readonly Stopwatch _sw = new Stopwatch();
+
+    private long? _prevElapsed;
+    private int _processed = 0;
+    private int _prevCount;
+    private bool _started = false;
+    private bool _startedOnce = false;
+    private double _accum;
+    private int _accumN;
+    private string _dopes = "";
+
+    private readonly List<string> _labels = new List<string>();
+
+    private string GetDope() => $"<span style=\"position:absolute;top:{GetTop()}px;left:{GetLeft()}px; transform:{GetTransform()}; color:{GetColor()};\">Dope</span>";
+
+    private int GetTop() => (int)Math.Round(_rand.NextDouble() * Height);
+    private int GetLeft() => (int)Math.Round(_rand.NextDouble() * Width);
+
+    private string GetTransform() => $"rotate({GetAngle()}deg)";
+
+    private int GetAngle() => (int)Math.Round(_rand.NextDouble() * 360);
+
+    private string GetColor() => $"rgb({GetColorByte()},{GetColorByte()},{GetColorByte()})";
+
+    private int GetColorByte() => (int)Math.Round(_rand.NextDouble() * 255);
+
+    private async void StartClicked()
+    {
+        _started = !_started;
+
+        if (_started)
+        {
+            _dopes = "Warming up..";
+            _sw.Start();
+            _prevElapsed = null;
+            _accum = 0;
+            _accumN = 0;
+        }
+        else
+        {
+            _dopes = $"{_accum / _accumN} Dopes/s (AVG)";
+        }
+
+        while (_started)
+        {
+            var label = GetDope();
+            _processed++;
+
+            if (_processed > Max)
+            {
+                _labels.RemoveAt(0);
+
+
+                if (_prevElapsed == null)
+                {
+                    _prevElapsed = _sw.ElapsedMilliseconds;
+                    _prevCount = _processed;
+                }
+
+                var diff = _sw.ElapsedMilliseconds - _prevElapsed;
+
+                if (diff > 500)
+                {
+                    _prevElapsed = _sw.ElapsedMilliseconds;
+                    var val = ((_processed - _prevCount) / (double)diff) * 1000;
+                    _dopes = $"{val} Dopes/s";
+                    _accum += val;
+                    _accumN++;
+                    _prevElapsed = _sw.ElapsedMilliseconds;
+                    _prevCount = _processed;
+                }
+            }
+
+            _labels.Add(label);
+
+            StateHasChanged();
+
+            await Task.Delay(1);
+        }
+    }
+}
