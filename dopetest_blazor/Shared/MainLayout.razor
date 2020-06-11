@@ -122,37 +122,45 @@
 
         while (_started)
         {
-            var label = GetDope();
-            _processed++;
+            var now = _sw.ElapsedMilliseconds;
+            var processedPreLoop = _processed;
 
-            if (_processed > Max)
+            //60hz, 16ms to build the frame
+            while (_started && _sw.ElapsedMilliseconds - now < 16)
             {
-                _labels.RemoveAt(0);
+                var label = GetDope();
+                _processed++;
 
-
-                if (_prevElapsed == null)
+                if (_processed > Max)
                 {
-                    _prevElapsed = _sw.ElapsedMilliseconds;
-                    _prevCount = _processed;
+                    _labels.RemoveAt(0);
+
+                    if (_prevElapsed == null)
+                    {
+                        _prevElapsed = _sw.ElapsedMilliseconds;
+                        _prevCount = _processed;
+                    }
+
+                    var diff = _sw.ElapsedMilliseconds - _prevElapsed;
+
+                    if (diff > 500)
+                    {
+                        _prevElapsed = _sw.ElapsedMilliseconds;
+                        var val = ((_processed - _prevCount) / (double)diff) * 1000;
+                        _dopes = $"{val} Dopes/s";
+                        _accum += val;
+                        _accumN++;
+                        _prevElapsed = _sw.ElapsedMilliseconds;
+                        _prevCount = _processed;
+                    }
                 }
 
-                var diff = _sw.ElapsedMilliseconds - _prevElapsed;
+                _labels.Add(label);
 
-                if (diff > 500)
-                {
-                    _prevElapsed = _sw.ElapsedMilliseconds;
-                    var val = ((_processed - _prevCount) / (double)diff) * 1000;
-                    _dopes = $"{val} Dopes/s";
-                    _accum += val;
-                    _accumN++;
-                    _prevElapsed = _sw.ElapsedMilliseconds;
-                    _prevCount = _processed;
-                }
+                StateHasChanged();
             }
 
-            _labels.Add(label);
-
-            StateHasChanged();
+            // Console.WriteLine($"Created this loop: {_processed - processedPreLoop}");
 
             await Task.Delay(1);
         }
