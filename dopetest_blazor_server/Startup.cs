@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace dopetest_blazor_server
+namespace dopetest_blazor
 {
 	public class Startup
 	{

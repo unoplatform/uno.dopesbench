@@ -4,4 +4,17 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\dopetest_blazor\Random2.cs" Link="Random2.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\dopetest_blazor\App.razor" Link="App.razor" />
+    <Content Include="..\dopetest_blazor\Shared\MainLayout.razor" Link="Shared\MainLayout.razor" />
+  </ItemGroup>
+
 </Project>

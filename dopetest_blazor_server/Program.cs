@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace dopetest_blazor_server
+namespace dopetest_blazor
 {
 	public class Program
 	{
