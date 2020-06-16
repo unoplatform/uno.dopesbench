@@ -20,6 +20,23 @@
 
 		</Canvas>
 
+		<ItemsControl x:Name="items">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<Canvas />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate x:DataType="local:BindingItem">
+					<TextBlock Text="Dope" Foreground="{x:Bind Color, Mode=OneWay}">
+						<TextBlock.RenderTransform>
+							<CompositeTransform Rotation="{x:Bind Rotation, Mode=OneWay}" TranslateX="{x:Bind Top, Mode=OneWay}" TranslateY="{x:Bind Left, Mode=OneWay}" />
+						</TextBlock.RenderTransform>
+					</TextBlock>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
 		<Grid x:Name="grid" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />

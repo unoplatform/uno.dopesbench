@@ -1,6 +1,7 @@
 ﻿using Saplin.xOPS.UI.Misc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -298,12 +299,12 @@ namespace DopeTestUno
                     }
                 }
 
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
             };
 
             sw.Start();
 
-            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
         }
 
         void StartTestReuseST()
@@ -386,12 +387,12 @@ namespace DopeTestUno
                     }
                 }
 
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
             };
 
             sw.Start();
 
-            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
         }
 
         //void StartTestGridST()
@@ -476,90 +477,168 @@ namespace DopeTestUno
         //    Device.BeginInvokeOnMainThread(loop);
         //}
 
-        //void StartTestChangeST()
-        //{
-        //    var rand = new Random2(0);
+        void StartTestBindings()
+        {
+            var rand = new Random2(0);
 
-        //    breakTest = false;
+            breakTest = false;
 
-        //    var width = grid.Width;
-        //    var height = grid.Height;
+            var width = absolute.ActualWidth;
+            var height = absolute.ActualHeight;
 
-        //    const int step = 20;
-        //    var labels = new Label[step * 2];
+            const int step = 20;
+            var labels = new TextBlock[step * 2];
 
-        //    var processed = 0;
+            var processed = 0;
 
-        //    long prevTicks = 0;
-        //    long prevMs = 0;
-        //    int prevProcessed = 0;
-        //    double avgSum = 0;
-        //    int avgN = 0;
-        //    var sw = new Stopwatch();
+            long prevTicks = 0;
+            long prevMs = 0;
+            int prevProcessed = 0;
+            double avgSum = 0;
+            int avgN = 0;
+            var sw = new Stopwatch();
 
-        //    var texts = new string[] { "dOpe", "Dope", "doPe", "dopE" };
+            var source = Enumerable.Range(0, max).Select(i => new BindingItem()).ToArray();
+            items.ItemsSource = source;
 
-        //    Action loop = null;
+            Action loop = null;
+            var current = 0;
 
-        //    loop = () =>
-        //    {
-        //        if (breakTest)
-        //        {
-        //            var avg = avgSum / avgN;
-        //            dopes.Text = string.Format("{0:0.00} Dopes/s (AVG)", avg).PadLeft(21);
-        //            return;
-        //        }
+            loop = () =>
+            {
+                var now = sw.ElapsedMilliseconds;
 
+                if (breakTest)
+                {
+                    var avg = avgSum / avgN;
+                    dopes.Text = string.Format("{0:0.00} Dopes/s (AVG)", avg).PadLeft(21);
+                    return;
+                }
 
-        //        var now = sw.ElapsedMilliseconds;
+                //60hz, 16ms to build the frame
+                while (sw.ElapsedMilliseconds - now < 16)
+                {
+                    var index = current++ % source.Length;
 
-        //        //60hz, 16ms to build the frame
-        //        while (sw.ElapsedMilliseconds - now < 16)
-        //        {
+                    source[index].Color = Color.FromArgb(0xFF, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255));
+                    source[index].Rotation = rand.NextDouble() * 360;
+                    source[index].Top = rand.NextDouble() * height;
+                    source[index].Left = rand.NextDouble() * width;
 
-        //            var label = new Label()
-        //            {
-        //                Text = "Dope",
-        //                TextColor = new Color(rand.NextDouble(), rand.NextDouble(), rand.NextDouble()),
-        //                Rotation = rand.NextDouble() * 360
-        //            };
+                    processed++;
 
-        //            AbsoluteLayout.SetLayoutFlags(label, AbsoluteLayoutFlags.PositionProportional);
-        //            AbsoluteLayout.SetLayoutBounds(label, new Rectangle(rand.NextDouble(), rand.NextDouble(), 80, 24));
+                    if (sw.ElapsedMilliseconds - prevMs > 500)
+                    {
 
-        //            if (processed > max)
-        //            {
-        //                (absolute.Children[processed % max] as Label).Text = texts[(int)Math.Floor(rand.NextDouble() * 4)];
-        //            }
-        //            else absolute.Children.Add(label);
+                        var r = (double)(processed - prevProcessed) / ((double)(sw.ElapsedTicks - prevTicks) / Stopwatch.Frequency);
+                        prevTicks = sw.ElapsedTicks;
+                        prevProcessed = processed;
 
-        //            processed++;
+                        if (processed > max)
+                        {
+                            dopes.Text = string.Format("{0:0.00} Dopes/s", r).PadLeft(15);
+                            avgSum += r;
+                            avgN++;
+                        }
 
-        //            if (sw.ElapsedMilliseconds - prevMs > 500)
-        //            {
+                        prevMs = sw.ElapsedMilliseconds;
+                    }
+                }
 
-        //                var r = (double)(processed - prevProcessed) / ((double)(sw.ElapsedTicks - prevTicks) / Stopwatch.Frequency);
-        //                prevTicks = sw.ElapsedTicks;
-        //                prevProcessed = processed;
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+            };
 
-        //                if (processed > max)
-        //                {
-        //                    dopes.Text = string.Format("{0:0.00} Dopes/s", r).PadLeft(15);
-        //                    avgSum += r;
-        //                    avgN++;
-        //                }
+            sw.Start();
 
-        //                prevMs = sw.ElapsedMilliseconds;
-        //            }
-        //        }
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+        }
 
-        //        Device.BeginInvokeOnMainThread(loop);
-        //    };
+		public void StartTestChangeST()
+        {
+            var rand = new Random2(0);
 
-        //    sw.Start();
+            breakTest = false;
 
-        //    Device.BeginInvokeOnMainThread(loop);
-        //}
+            var width = grid.ActualWidth;
+            var height = grid.ActualHeight;
+
+            const int step = 20;
+            var labels = new TextBlock[step * 2];
+
+            var processed = 0;
+
+            long prevTicks = 0;
+            long prevMs = 0;
+            int prevProcessed = 0;
+            double avgSum = 0;
+            int avgN = 0;
+            var sw = new Stopwatch();
+
+            var texts = new string[] { "dOpe", "Dope", "doPe", "dopE" };
+
+            Action loop = null;
+
+            loop = () =>
+            {
+                if (breakTest)
+                {
+                    var avg = avgSum / avgN;
+                    dopes.Text = string.Format("{0:0.00} Dopes/s (AVG)", avg).PadLeft(21);
+                    return;
+                }
+
+                var now = sw.ElapsedMilliseconds;
+
+                //60hz, 16ms to build the frame
+                while (sw.ElapsedMilliseconds - now < 16)
+                {
+                    if (processed > max)
+                    {
+                        (absolute.Children[processed % max] as TextBlock).Text = texts[(int)Math.Floor(rand.NextDouble() * 4)];
+                    }
+                    else
+                    {
+                        var label = new TextBlock()
+                        {
+                            Text = "Dope",
+                            Foreground = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255)))
+                        };
+
+                        label.RenderTransform = new RotateTransform() { Angle = rand.NextDouble() * 360 };
+
+                        Canvas.SetLeft(label, rand.NextDouble() * width);
+                        Canvas.SetTop(label, rand.NextDouble() * height);
+
+                        absolute.Children.Add(label);
+                    }
+
+                    processed++;
+
+                    if (sw.ElapsedMilliseconds - prevMs > 500)
+                    {
+
+                        var r = (double)(processed - prevProcessed) / ((double)(sw.ElapsedTicks - prevTicks) / Stopwatch.Frequency);
+                        prevTicks = sw.ElapsedTicks;
+                        prevProcessed = processed;
+
+                        if (processed > max)
+                        {
+                            dopes.Text = string.Format("{0:0.00} Dopes/s", r).PadLeft(15);
+                            avgSum += r;
+                            avgN++;
+                        }
+
+                        prevMs = sw.ElapsedMilliseconds;
+                    }
+                }
+
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+            };
+
+            sw.Start();
+
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+        }
 
         private void SetControlsAtStart()
         {
@@ -570,43 +649,79 @@ namespace DopeTestUno
             dopes.Text = "Warming up..";
         }
 
-        void startMT_Clicked(System.Object sender, System.EventArgs e)
-        {
-            SetControlsAtStart();
-            //StartTestMT2();
-        }
-
-        void startST_Clicked(System.Object sender, System.EventArgs e)
+        void startST_Clicked(System.Object sender, object e)
         {
             SetControlsAtStart();
             StartTestST();
         }
 
-
-        void startGridST_Clicked(System.Object sender, System.EventArgs e)
+        void startGridST_Clicked(System.Object sender, object e)
         {
             SetControlsAtStart();
-            //StartTestGridST();
+            StartTestBindings();
         }
 
-        void startChangeST_Clicked(System.Object sender, System.EventArgs e)
+        void startChangeST_Clicked(System.Object sender, object e)
         {
             SetControlsAtStart();
-            //StartTestChangeST();
+            StartTestChangeST();
         }
 
-        void startChangeReuse_Clicked(System.Object sender, System.EventArgs e)
+        void startChangeReuse_Clicked(System.Object sender, object e)
         {
             SetControlsAtStart();
             StartTestReuseST();
         }
 
-		void Stop_Clicked(System.Object sender, System.EventArgs e)
+		void Stop_Clicked(System.Object sender, object e)
         {
             breakTest = true;
             stop.Visibility = Visibility.Collapsed;
             startChangeST.Visibility = startST.Visibility = startGridST.Visibility = Visibility.Visible;
         }
-
     }
+
+    public class BindingItem : INotifyPropertyChanged
+    {
+        private double top;
+        private double left;
+        private double rotation;
+        private Color color;
+
+        public double Top
+        {
+            get => top; set
+            {
+                top = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Top)));
+            }
+        }
+        public double Left
+        {
+            get => left; set
+            {
+                left = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Left)));
+            }
+        }
+        public double Rotation
+        {
+            get => rotation; set
+            {
+                rotation = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Rotation)));
+            }
+        }
+        public Color Color
+        {
+            get => color; set
+            {
+                color = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+    }
+
 }
