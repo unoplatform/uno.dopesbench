@@ -6,7 +6,9 @@
     <WasmHead>true</WasmHead>
     <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
     <NoWarn>NU1701</NoWarn>
-		<WasmShellMonoRuntimeExecutionMode>FullAOT</WasmShellMonoRuntimeExecutionMode>
+		<!--<WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile>
+		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>-->
+		<WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode>
 	</PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
@@ -24,7 +26,10 @@
   <ItemGroup>
     <LinkerDescriptor Include="LinkerConfig.xml" />
   </ItemGroup>
-  <ItemGroup>
+	<ItemGroup>
+		<WasmShellEnableAotProfile Include="aot.profile" />
+	</ItemGroup> 
+	<ItemGroup>
     <!--
     This item group is required by the project template because of the
     new SDK-Style project, otherwise some files are not added automatically.
@@ -35,14 +40,14 @@
     <None Include="LinkerConfig.xml" />
     <None Include="wwwroot\web.config" />
   </ItemGroup>
-  <ItemGroup>
+	<ItemGroup>
     <!-- Note that for WebAssembly version 1.1.1 of the console logger required -->
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
-    <PackageReference Include="Uno.UI" Version="2.4.0" />
+    <PackageReference Include="Uno.UI" Version="3.0.0-dev.500" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="2.4.0" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.Wasm.Bootstrap" Version="1.2.0" />
-    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="1.2.0" />
+    <PackageReference Include="Uno.Wasm.Bootstrap" Version="1.3.0-dev.44" />
+    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="1.3.0-dev.44" />
   </ItemGroup>
   <Import Project="..\DopeTestUno.Shared\DopeTestUno.Shared.projitems" Label="Shared" Condition="Exists('..\DopeTestUno.Shared\DopeTestUno.Shared.projitems')" />
 </Project>

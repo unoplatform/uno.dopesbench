@@ -28,7 +28,10 @@
 			</ItemsControl.ItemsPanel>
 			<ItemsControl.ItemTemplate>
 				<DataTemplate x:DataType="local:BindingItem">
-					<TextBlock Text="Dope" Foreground="{x:Bind Color, Mode=OneWay}">
+					<TextBlock Text="Dope">  <!--Foreground="{x:Bind local:MainPage.ConvertColor(Color), Mode=OneWay}"-->
+						<TextBlock.Foreground>
+							<SolidColorBrush Color="{x:Bind Color, Mode=OneWay, FallbackValue=Red}" />
+						</TextBlock.Foreground>
 						<TextBlock.RenderTransform>
 							<CompositeTransform Rotation="{x:Bind Rotation, Mode=OneWay}" TranslateX="{x:Bind Top, Mode=OneWay}" TranslateY="{x:Bind Left, Mode=OneWay}" />
 						</TextBlock.RenderTransform>
@@ -80,7 +83,7 @@
 				Background="Blue"
 				Click="startST_Clicked"/>
 			<Button x:Name="startGridST"
-				Content="@ Grid" 
+				Content="@ Binding 2" 
 					Background="Blue"
 				Click="startGridST_Clicked"/>
 			<Button x:Name="startChangeST"
@@ -88,7 +91,7 @@
 					Background="Blue"
 				Click="startChangeST_Clicked"/>
 			<Button x:Name="startReuseST"
-				Content="@ Reuse"
+				Content="@ Reuse 2"
 					Background="Blue"
 				Click="startChangeReuse_Clicked"/>
 

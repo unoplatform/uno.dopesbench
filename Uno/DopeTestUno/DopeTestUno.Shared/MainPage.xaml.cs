@@ -36,6 +36,8 @@ namespace DopeTestUno
         volatile bool breakTest = false;
         const int max = 600;
 
+        public static Brush ConvertColor(Color c) => new SolidColorBrush(c);
+
         //void StartTestMT()
         //{
         //    var rand = new Random2(0);
@@ -77,7 +79,7 @@ namespace DopeTestUno
         //            absolute.Children.Add(label);
 
         //            await Task.Yield();
-                 
+
         //            if (breakTest) break;
 
         //            i++;
@@ -119,110 +121,110 @@ namespace DopeTestUno
         //    });
         //}
 
-     //   void StartTestMT2()
-     //   {
-     //       var rand = new Random2(0);
+        //   void StartTestMT2()
+        //   {
+        //       var rand = new Random2(0);
 
-     //       breakTest = false;
+        //       breakTest = false;
 
-     //       var width = absolute.ActualWidth;
-     //       var height = absolute.ActualHeight;
+        //       var width = absolute.ActualWidth;
+        //       var height = absolute.ActualHeight;
 
-     //       const int step = 75;
+        //       const int step = 75;
 
-     //       var processed = 0;
+        //       var processed = 0;
 
-     //       long prevTicks = 0;
-     //       long prevMs = 0;
-     //       int prevProcessed = 0;
-     //       double avgSum = 0;
-     //       int avgN = 0;
-     //       var sw = new Stopwatch();
+        //       long prevTicks = 0;
+        //       long prevMs = 0;
+        //       int prevProcessed = 0;
+        //       double avgSum = 0;
+        //       int avgN = 0;
+        //       var sw = new Stopwatch();
 
-     //       var bankA = new TextBlock[step];
-     //       var bankB = new TextBlock[step];
+        //       var bankA = new TextBlock[step];
+        //       var bankB = new TextBlock[step];
 
-     //       Action<TextBlock[]> addLabels = (TextBlock[] labels) =>
-     //       {
-     //           for (int k = 0; k < step; k++)
-     //           {
-					//var label = new TextBlock()
-					//{
-					//	Text = "Dope",
-					//	Foreground = new SolidColorBrush(Color.FromArgb(1, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255)))
-					//};
+        //       Action<TextBlock[]> addLabels = (TextBlock[] labels) =>
+        //       {
+        //           for (int k = 0; k < step; k++)
+        //           {
+        //var label = new TextBlock()
+        //{
+        //	Text = "Dope",
+        //	Foreground = new SolidColorBrush(Color.FromArgb(1, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255)))
+        //};
 
-					//label.RenderTransform = new RotateTransform() { Angle = rand.NextDouble() * 360 };
+        //label.RenderTransform = new RotateTransform() { Angle = rand.NextDouble() * 360 };
 
-					//Canvas.SetLeft(label, rand.NextDouble());
-					//Canvas.SetTop(label, rand.NextDouble());
+        //Canvas.SetLeft(label, rand.NextDouble());
+        //Canvas.SetTop(label, rand.NextDouble());
 
-     //               labels[k] = label;
-     //           }
-     //       };
+        //               labels[k] = label;
+        //           }
+        //       };
 
-     //       addLabels(bankA);
-     //       addLabels(bankB);
+        //       addLabels(bankA);
+        //       addLabels(bankB);
 
-     //       var bank = bankA;
+        //       var bank = bankA;
 
-     //       Action loop = null;
+        //       Action loop = null;
 
-     //       var i = 0;
-     //       Task task = null;
+        //       var i = 0;
+        //       Task task = null;
 
-     //       loop = () =>
-     //       {
-     //           if (breakTest)
-     //           {
-     //               var avg = avgSum / avgN;
-     //               dopes.Text = string.Format("{0:0.00} Dopes/s (AVG)", avg).PadLeft(21);
-     //               return;
-     //           }
+        //       loop = () =>
+        //       {
+        //           if (breakTest)
+        //           {
+        //               var avg = avgSum / avgN;
+        //               dopes.Text = string.Format("{0:0.00} Dopes/s (AVG)", avg).PadLeft(21);
+        //               return;
+        //           }
 
-     //           if (processed > max)
-     //           {
-     //               absolute.Children.RemoveAt(0);
-     //           }
+        //           if (processed > max)
+        //           {
+        //               absolute.Children.RemoveAt(0);
+        //           }
 
-     //           absolute.Children.Add(bank[i]);
-     //           i++;
+        //           absolute.Children.Add(bank[i]);
+        //           i++;
 
-     //           if (i == step)
-     //           {
-     //               if (task != null && task.Status != TaskStatus.RanToCompletion) task.Wait();
-     //               task = Task.Run(() => addLabels(bank));
-     //               if (bank == bankA) bank = bankB; else bank = bankA;
-     //               i = 0;
-     //           }
+        //           if (i == step)
+        //           {
+        //               if (task != null && task.Status != TaskStatus.RanToCompletion) task.Wait();
+        //               task = Task.Run(() => addLabels(bank));
+        //               if (bank == bankA) bank = bankB; else bank = bankA;
+        //               i = 0;
+        //           }
 
-     //           processed++;
+        //           processed++;
 
-     //           if (sw.ElapsedMilliseconds - prevMs > 500)
-     //           {
+        //           if (sw.ElapsedMilliseconds - prevMs > 500)
+        //           {
 
-     //               var r = (double)(processed - prevProcessed) / ((double)(sw.ElapsedTicks - prevTicks) / Stopwatch.Frequency);
-     //               prevTicks = sw.ElapsedTicks;
-     //               prevProcessed = processed;
+        //               var r = (double)(processed - prevProcessed) / ((double)(sw.ElapsedTicks - prevTicks) / Stopwatch.Frequency);
+        //               prevTicks = sw.ElapsedTicks;
+        //               prevProcessed = processed;
 
-     //               if (processed > max)
-     //               {
-     //                   dopes.Text = string.Format("{0:0.00} Dopes/s", r).PadLeft(15);
-     //                   avgSum += r;
-     //                   avgN++;
-     //               }
+        //               if (processed > max)
+        //               {
+        //                   dopes.Text = string.Format("{0:0.00} Dopes/s", r).PadLeft(15);
+        //                   avgSum += r;
+        //                   avgN++;
+        //               }
 
-     //               prevMs = sw.ElapsedMilliseconds;
-     //           }
+        //               prevMs = sw.ElapsedMilliseconds;
+        //           }
 
-     //           _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
-     //       };
+        //           _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
+        //       };
 
-     //       sw.Start();
+        //       sw.Start();
 
 
-     //       Device.BeginInvokeOnMainThread(loop);
-     //   }
+        //       Device.BeginInvokeOnMainThread(loop);
+        //   }
 
         void StartTestST()
         {
@@ -299,12 +301,12 @@ namespace DopeTestUno
                     }
                 }
 
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
             };
 
             sw.Start();
 
-            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
         }
 
         void StartTestReuseST()
@@ -330,7 +332,7 @@ namespace DopeTestUno
 
             Action loop = null;
 
-            System.Collections.Concurrent.ConcurrentBag<TextBlock> _cache = new System.Collections.Concurrent.ConcurrentBag<TextBlock>();
+            Stack<TextBlock> _cache = new Stack<TextBlock>();
 
             loop = () =>
             {
@@ -346,13 +348,10 @@ namespace DopeTestUno
                 //60hz, 16ms to build the frame
                 while (sw.ElapsedMilliseconds - now < 16)
                 {
-                    if(!_cache.TryTake(out var label))
-					{
-                        label = new TextBlock();
-                    }
+                    var label = _cache.Count == 0 ? new TextBlock() { Foreground = new SolidColorBrush() } : _cache.Pop();
 
                     label.Text = "Dope";
-                    label.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255)));
+                    (label.Foreground as SolidColorBrush).Color = Color.FromArgb(0xFF, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255));
 
                     label.RenderTransform = new RotateTransform() { Angle = rand.NextDouble() * 360 };
 
@@ -361,7 +360,7 @@ namespace DopeTestUno
 
                     if (processed > max)
                     {
-                        _cache.Add(absolute.Children[0] as TextBlock);
+                        _cache.Push(absolute.Children[0] as TextBlock);
                         absolute.Children.RemoveAt(0);
                     }
 
@@ -498,7 +497,7 @@ namespace DopeTestUno
             int avgN = 0;
             var sw = new Stopwatch();
 
-            var source = Enumerable.Range(0, max).Select(i => new BindingItem()).ToArray();
+            var source = Enumerable.Range(0, max).Select(i => new BindingItem() { Color = Colors.Red }).ToArray();
             items.ItemsSource = source;
 
             Action loop = null;
@@ -545,12 +544,12 @@ namespace DopeTestUno
                     }
                 }
 
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+                _ = Dispatcher.RunIdleAsync(_ => loop());
             };
 
             sw.Start();
 
-            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => loop());
+            _ = Dispatcher.RunIdleAsync(_ => loop());
         }
 
 		public void StartTestChangeST()
@@ -693,7 +692,7 @@ namespace DopeTestUno
             get => top; set
             {
                 top = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Top)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Top)));
             }
         }
         public double Left
@@ -701,7 +700,7 @@ namespace DopeTestUno
             get => left; set
             {
                 left = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Left)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Left)));
             }
         }
         public double Rotation
@@ -709,7 +708,7 @@ namespace DopeTestUno
             get => rotation; set
             {
                 rotation = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Rotation)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Rotation)));
             }
         }
         public Color Color
@@ -717,7 +716,7 @@ namespace DopeTestUno
             get => color; set
             {
                 color = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Color)));
             }
         }
 
