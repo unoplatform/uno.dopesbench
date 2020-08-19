@@ -81,18 +81,22 @@
 			<Button x:Name="startST"
 				Content="@ Build"
 				Background="Blue"
+				Foreground="White"
 				Click="startST_Clicked"/>
 			<Button x:Name="startGridST"
 				Content="@ Binding 2" 
-					Background="Blue"
+				Background="Blue"
+				Foreground="White"
 				Click="startGridST_Clicked"/>
 			<Button x:Name="startChangeST"
 				Content="@ Change"
-					Background="Blue"
+				Background="Blue"
+				Foreground="White"
 				Click="startChangeST_Clicked"/>
 			<Button x:Name="startReuseST"
 				Content="@ Reuse 2"
-					Background="Blue"
+				Background="Blue"
+				Foreground="White"
 				Click="startChangeReuse_Clicked"/>
 
 		</StackPanel>

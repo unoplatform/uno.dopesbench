@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -31,7 +33,9 @@ namespace DopeTestUno
 		public MainPage()
 		{
 			this.InitializeComponent();
-		}
+
+            ApplicationView.GetForCurrentView().Title = "Dopes Benchmark - Uno Platform";
+        }
 
         volatile bool breakTest = false;
         const int max = 600;
@@ -301,7 +305,7 @@ namespace DopeTestUno
                     }
                 }
 
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () => loop());
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => loop());
             };
 
             sw.Start();
