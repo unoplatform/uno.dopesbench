@@ -18,7 +18,7 @@
     <AndroidUseAapt2>false</AndroidUseAapt2>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\DopeTestUno.Shared\Strings</ResourcesDirectory>
@@ -73,7 +73,7 @@
   <ItemGroup>
     <PackageReference Include="Uno.UI" Version="3.0.0-dev.500" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="3.0.0-dev.500" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.32" />
+    <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.1" />
   </ItemGroup>
@@ -101,6 +101,4 @@
   </ItemGroup>
   <Import Project="..\DopeTestUno.Shared\DopeTestUno.Shared.projitems" Label="Shared" Condition="Exists('..\DopeTestUno.Shared\DopeTestUno.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <!-- This will force the generation of the APK when not building inside visual studio -->
-  <Target Name="GenerateBuild" DependsOnTargets="SignAndroidPackage" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'==''" />
 </Project>

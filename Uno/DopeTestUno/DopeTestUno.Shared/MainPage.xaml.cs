@@ -476,7 +476,7 @@ namespace DopeTestUno
         //    Device.BeginInvokeOnMainThread(loop);
         //}
 
-        void StartTestBindings()
+        void StartTestXBind()
         {
             var rand = new Random2(0);
 
@@ -498,7 +498,7 @@ namespace DopeTestUno
             var sw = new Stopwatch();
 
             var source = Enumerable.Range(0, max).Select(i => new BindingItem() { Color = Colors.Red }).ToArray();
-            items.ItemsSource = source;
+            itemsXBind.ItemsSource = source;
 
             Action loop = null;
             var current = 0;
@@ -552,7 +552,83 @@ namespace DopeTestUno
             _ = Dispatcher.RunIdleAsync(_ => loop());
         }
 
-		public void StartTestChangeST()
+        void StartTestBinding()
+        {
+            var rand = new Random2(0);
+
+            breakTest = false;
+
+            var width = absolute.ActualWidth;
+            var height = absolute.ActualHeight;
+
+            const int step = 20;
+            var labels = new TextBlock[step * 2];
+
+            var processed = 0;
+
+            long prevTicks = 0;
+            long prevMs = 0;
+            int prevProcessed = 0;
+            double avgSum = 0;
+            int avgN = 0;
+            var sw = new Stopwatch();
+
+            var source = Enumerable.Range(0, max).Select(i => new BindingItem() { Color = Colors.Red }).ToArray();
+            itemsBinding.ItemsSource = source;
+
+            Action loop = null;
+            var current = 0;
+
+            loop = () =>
+            {
+                var now = sw.ElapsedMilliseconds;
+
+                if (breakTest)
+                {
+                    var avg = avgSum / avgN;
+                    dopes.Text = string.Format("{0:0.00} Dopes/s (AVG)", avg).PadLeft(21);
+                    return;
+                }
+
+                //60hz, 16ms to build the frame
+                while (sw.ElapsedMilliseconds - now < 16)
+                {
+                    var index = current++ % source.Length;
+
+                    source[index].Color = Color.FromArgb(0xFF, (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255), (byte)(rand.NextDouble() * 255));
+                    source[index].Rotation = rand.NextDouble() * 360;
+                    source[index].Top = rand.NextDouble() * height;
+                    source[index].Left = rand.NextDouble() * width;
+
+                    processed++;
+
+                    if (sw.ElapsedMilliseconds - prevMs > 500)
+                    {
+
+                        var r = (double)(processed - prevProcessed) / ((double)(sw.ElapsedTicks - prevTicks) / Stopwatch.Frequency);
+                        prevTicks = sw.ElapsedTicks;
+                        prevProcessed = processed;
+
+                        if (processed > max)
+                        {
+                            dopes.Text = string.Format("{0:0.00} Dopes/s", r).PadLeft(15);
+                            avgSum += r;
+                            avgN++;
+                        }
+
+                        prevMs = sw.ElapsedMilliseconds;
+                    }
+                }
+
+                _ = Dispatcher.RunIdleAsync(_ => loop());
+            };
+
+            sw.Start();
+
+            _ = Dispatcher.RunIdleAsync(_ => loop());
+        }
+
+        public void StartTestChangeST()
         {
             var rand = new Random2(0);
 
@@ -641,7 +717,7 @@ namespace DopeTestUno
 
         private void SetControlsAtStart()
         {
-            startChangeST.Visibility = startST.Visibility = startGridST.Visibility = Visibility.Collapsed;
+            startChangeST.Visibility = startST.Visibility = startGridST.Visibility = startReuseST.Visibility = startGridBinding.Visibility = Visibility.Collapsed;
             stop.Visibility = dopes.Visibility = Visibility.Visible;
             absolute.Children.Clear();
             grid.Children.Clear();
@@ -654,10 +730,16 @@ namespace DopeTestUno
             StartTestST();
         }
 
+        void startGridBinding_Clicked(System.Object sender, object e)
+        {
+            SetControlsAtStart();
+            StartTestBinding();
+        }
+
         void startGridST_Clicked(System.Object sender, object e)
         {
             SetControlsAtStart();
-            StartTestBindings();
+            StartTestXBind();
         }
 
         void startChangeST_Clicked(System.Object sender, object e)
@@ -676,7 +758,7 @@ namespace DopeTestUno
         {
             breakTest = true;
             stop.Visibility = Visibility.Collapsed;
-            startChangeST.Visibility = startST.Visibility = startGridST.Visibility = Visibility.Visible;
+            startChangeST.Visibility = startST.Visibility = startGridST.Visibility = startReuseST.Visibility = startGridBinding.Visibility = Visibility.Visible;
         }
     }
 

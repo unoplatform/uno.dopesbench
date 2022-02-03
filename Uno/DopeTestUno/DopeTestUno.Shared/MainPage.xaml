@@ -20,7 +20,7 @@
 
 		</Canvas>
 
-		<ItemsControl x:Name="items">
+		<ItemsControl x:Name="itemsXBind">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<Canvas />
@@ -28,12 +28,36 @@
 			</ItemsControl.ItemsPanel>
 			<ItemsControl.ItemTemplate>
 				<DataTemplate x:DataType="local:BindingItem">
-					<TextBlock Text="Dope">  <!--Foreground="{x:Bind local:MainPage.ConvertColor(Color), Mode=OneWay}"-->
+					<TextBlock Text="Dope">
 						<TextBlock.Foreground>
 							<SolidColorBrush Color="{x:Bind Color, Mode=OneWay, FallbackValue=Red}" />
 						</TextBlock.Foreground>
 						<TextBlock.RenderTransform>
-							<CompositeTransform Rotation="{x:Bind Rotation, Mode=OneWay}" TranslateX="{x:Bind Top, Mode=OneWay}" TranslateY="{x:Bind Left, Mode=OneWay}" />
+							<CompositeTransform Rotation="{x:Bind Rotation, Mode=OneWay}"
+												TranslateX="{x:Bind Top, Mode=OneWay}"
+												TranslateY="{x:Bind Left, Mode=OneWay}" />
+						</TextBlock.RenderTransform>
+					</TextBlock>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+
+		<ItemsControl x:Name="itemsBinding">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<Canvas />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate x:DataType="local:BindingItem">
+					<TextBlock Text="Dope">
+						<TextBlock.Foreground>
+							<SolidColorBrush Color="{Binding Color, Mode=OneWay, FallbackValue=Red}" />
+						</TextBlock.Foreground>
+						<TextBlock.RenderTransform>
+							<CompositeTransform Rotation="{Binding Rotation, Mode=OneWay}"
+												TranslateX="{Binding Top, Mode=OneWay}"
+												TranslateY="{Binding Left, Mode=OneWay}" />
 						</TextBlock.RenderTransform>
 					</TextBlock>
 				</DataTemplate>
@@ -82,10 +106,14 @@
 				Content="@ Build"
 				Background="Blue"
 				Click="startST_Clicked"/>
-			<Button x:Name="startGridST"
-				Content="@ Binding 2" 
+			<Button x:Name="startGridBinding"
+					Content="@ Binding 1"
 					Background="Blue"
-				Click="startGridST_Clicked"/>
+					Click="startGridBinding_Clicked" />
+			<Button x:Name="startGridST"
+					Content="@ Binding 2"
+					Background="Blue"
+					Click="startGridST_Clicked" />
 			<Button x:Name="startChangeST"
 				Content="@ Change"
 					Background="Blue"
