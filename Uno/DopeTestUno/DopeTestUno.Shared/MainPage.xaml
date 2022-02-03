@@ -76,7 +76,7 @@
 		<TextBlock x:Name="dopes" 
 				   Grid.Row="0" 
 				   Grid.Column="0" 
-				   Margin="0,20,0,0" 
+				   Margin="0,45,0,0" 
 				   Padding="7,7,7,7" 
 				   Foreground="White"
 				   VerticalAlignment="Top"
